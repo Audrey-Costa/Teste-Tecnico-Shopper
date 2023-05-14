@@ -1,0 +1,31 @@
+{
+  "name": "shopper-test-server",
+  "version": "1.0.0",
+  "description": "This is the product price API of the store.",
+  "main": "server.ts",
+  "scripts": {
+    "dev": "tsx watch src/server.ts"
+  },
+  "keywords": [
+    "Teste Técnico",
+    "Shopper",
+    "Backend",
+    "Typescript"
+  ],
+  "author": "Audrey Costa",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
+    "joi": "^17.9.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.13",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.17",
+    "tsx": "^3.12.7",
+    "typescript": "^5.0.4"
+  }
+}
