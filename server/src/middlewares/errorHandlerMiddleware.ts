@@ -20,5 +20,5 @@ export default async function errorHandlerMiddleware(error: Error, req: Request,
     if(error.type === "Method not allowed"){
         return res.status(403).send(error.message);
     }
-    return res.sendStatus(500).send(error.message);
+    return res.status(500).send(error.message);
 }

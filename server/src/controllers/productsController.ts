@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import productsServices from "../services/productsService";
+import ProductsUpdated from "../types/ProductsUpdatedType";
 
 export async function getProducts(req: Request, res: Response){
   const products = await productsServices.getProducts();
@@ -10,7 +11,7 @@ export async function getProducts(req: Request, res: Response){
 export async function updateProductSalesPrice(req: Request, res: Response) {
   const productsToUpdate = req.body;
 
-  await productsServices.updateProductSalesPrice(productsToUpdate);
+  const productsUpdated: ProductsUpdated[] = await productsServices.updateProductSalesPrice(productsToUpdate);
 
-  return res.sendStatus(200);
+  return res.status(200).json(productsUpdated);
 }
