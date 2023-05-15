@@ -1,11 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-
-interface Error {
-  name: string;
-  message: string;
-  type: string;
-  stack?: string;
-}
+import Error from "../types/ErrorType";
 
 export default async function errorHandlerMiddleware(error: Error, req: Request, res: Response, next: NextFunction){
     if (error.type === "Not Found"){
