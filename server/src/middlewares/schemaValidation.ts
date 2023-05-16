@@ -9,9 +9,8 @@ const schemaValidation = (schema: Joi.ObjectSchema<ProductToUpdate>) => {
     const readableFile = new Readable();
     readableFile.push(req.file?.buffer);
     readableFile.push(null);
-
     const productsLine = readline.createInterface({
-    input: readableFile
+      input: readableFile
     })
     const errors: string[] = [];
     const products: ProductToUpdate[] = [];
@@ -28,6 +27,7 @@ const schemaValidation = (schema: Joi.ObjectSchema<ProductToUpdate>) => {
         new_price: Number(columns[1])
       });
     }
+    console.log(products)
     for(let product of products){
       const { error } = schema.validate(product, {abortEarly: false, convert: false});
       if(error){

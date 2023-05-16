@@ -7,13 +7,28 @@
 
 .logo {
   height: 6em;
-  padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
-  border-radius: 50px;
+  border-radius: 20px;
 }
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
 
+p {
+  font-size: 40px;
+  color: aliceblue;
+}
 
+button {
+  margin: 30px 10px;
+}
+
+label {
+  font-size: 30px;
+}
+
+#inputDiv {
+  display: flex;
+  flex-direction: column;
+}
