@@ -37,10 +37,7 @@ async function updateProductSalesPrice(productsToUpdate: ProductToUpdate[]): Pro
       }
     }
 
-    if(await verifyIfTheNewPriceIsBiggerThanCost(bigintCode, new_price)){
-      if(productIsInPack){
-        
-      }
+    if(await verifyIfTheNewPriceIsValid(bigintCode, new_price)){
       const productUpdated = await productsRepository.updateSingleProductSalesPrice(bigintCode, new_price);
 
       if(productUpdated){
@@ -54,7 +51,39 @@ async function updateProductSalesPrice(productsToUpdate: ProductToUpdate[]): Pro
 
 async function updateProductPackSalesPrice(productsInPack: packs[], productsToUpdate: ProductToUpdate[]){
   for (const productInPack of productsInPack){
-    const packs = await productsRepository.getPacksByPack_id(productInPack.pack_id);
+    const validadVerificated = await verifyIfNewPricePackIsValid(productInPack, productsToUpdate);
+    
+    if(typeof validadVerificated === "string"){
+      return validadVerificated;
+    }
+    
+    if(validadVerificated.sumProductsPackPrice === validadVerificated.packNewPrice){
+      if(await verifyIfTheNewPriceIsValid(productInPack.pack_id, validadVerificated.packNewPrice)){
+        const packUpdated = await productsRepository.updatePackProductsSalesPrice(
+        productInPack.pack_id, 
+        validadVerificated.packNewPrice
+        );
+        return packUpdated;
+      }
+    }else{
+      return "The bundle price differs from the price of the individual products!";
+    }
+  }
+}
+
+async function verifyIfTheNewPriceIsValid(code: bigint, new_price: number): Promise<boolean>{
+  const product = await productsRepository.getProductsBycode(code);
+
+  if(Number(product.cost_price) > new_price){
+    return false;
+  }else if(Math.round(Math.abs((new_price - Number(product.sales_price))/Number(product.sales_price)) * 100)!== 10){
+    return false;
+  }
+  return true;
+}
+
+async function verifyIfNewPricePackIsValid(productInPack: packs, productsToUpdate: ProductToUpdate[]) {
+  const packs = await productsRepository.getPacksByPack_id(productInPack.pack_id);
 
     let packNewPrice: number = 0;
     const hashMap: Map<number, number> = new Map();
@@ -86,7 +115,7 @@ async function updateProductPackSalesPrice(productsInPack: packs[], productsToUp
         i++
       }
       if(Number(product.cost_price) > new_price){
-        return "New price below cost price!";
+        return "New price is below cost price!";
       }
 
       if(Math.round(Math.abs((new_price - Number(product.sales_price))/Number(product.sales_price)) * 100)!== 10){
@@ -101,32 +130,15 @@ async function updateProductPackSalesPrice(productsInPack: packs[], productsToUp
     }
 
     sumProductsPackPrice = Number(sumProductsPackPrice.toFixed(2));
-    if(sumProductsPackPrice === packNewPrice){
-      if(await verifyIfTheNewPriceIsBiggerThanCost(productInPack.pack_id, packNewPrice)){
-        const packUpdated = await productsRepository.updatePackProductsSalesPrice(
-        productInPack.pack_id, 
-        packNewPrice
-        );
-        return packUpdated;
-      }
-    }else{
-      return "The bundle price differs from the price of the individual products!";
-    }
-  }
-}
 
-async function verifyIfTheNewPriceIsBiggerThanCost(code: bigint, new_price: number): Promise<boolean>{
-  const product = await productsRepository.getProductsBycode(code);
-
-  if(Number(product.cost_price) > new_price){
-    return false;
-  }
-  return true;
+    return {sumProductsPackPrice, packNewPrice}
 }
 
 const productsServices = {
   getProducts,
-  updateProductSalesPrice
+  updateProductSalesPrice,
+  verifyIfTheNewPriceIsValid,
+  verifyIfNewPricePackIsValid
 }
 
 export default productsServices;
